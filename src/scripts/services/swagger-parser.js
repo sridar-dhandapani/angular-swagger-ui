@@ -320,7 +320,7 @@ angular
 		function trustHtml(text) {
 			var trusted = text;
 			if (typeof text === 'string' && trustedSources) {
-				trusted = $sce.trustAsHtml(escapeChars(text));
+				trusted = $sce.trustAsHtml(text);
 			}
 			// else ngSanitize MUST be added to app
 			return trusted;
