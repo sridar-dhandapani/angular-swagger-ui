@@ -53,7 +53,12 @@ angular
 				//
 				inputType: '@?',
 				// Allows rendering an external OpenApi specification (string or object, optional)
-				input: '=?'
+                input: '=?',
+                // Tag & Operations expansion option
+				// Allowed values:
+				//		"list": (default) expand all tags
+				//		"full": expand all tags and operations
+				docExpansion: '@?'
 			},
 			link: function(scope) {
 				// check parameters
@@ -69,6 +74,7 @@ angular
 			}
 		};
 	}]);
+
 /*
  * Orange angular-swagger-ui - v0.5.5
  *
@@ -165,7 +171,8 @@ angular
 					var data = {
 						url: url,
 						parser: $scope.parser || 'auto',
-						trustedSources: $scope.trustedSources
+                        trustedSources: $scope.trustedSources,
+                        docExpansion: $scope.docExpansion
 					};
 					swaggerLoader
 						.get(data)
@@ -315,6 +322,7 @@ angular
 		};
 
 	}]);
+
 /*
  * Orange angular-swagger-ui - v0.5.5
  *
@@ -1210,7 +1218,7 @@ angular
 			paramId = 0;
 			parseInfos(data.openApiSpec, data.url, infos, defaultContentType);
 			parseTags(data.openApiSpec, resources, map);
-			parseOperations(data.openApiSpec, resources, form, map, defaultContentType, openPath);
+			parseOperations(data.openApiSpec, resources, form, map, defaultContentType, openPath, data.docExpansion);
 			cleanUp(resources, openPath, sortResources);
 			// prepare result
 			data.ui = {
@@ -1265,7 +1273,7 @@ angular
 		/**
 		 * parse operations
 		 */
-		function parseOperations(openApiSpec, resources, form, map, defaultContentType, openPath) {
+		function parseOperations(openApiSpec, resources, form, map, defaultContentType, openPath, docExpansion) {
 			var i,
 				path,
 				pathObject,
@@ -1298,14 +1306,19 @@ angular
 							tag = operation.tags[i];
 							if (typeof map[tag] === 'undefined') {
 								map[tag] = resources.length;
+                                tagOpen = false;
+                                if (docExpansion === 'list') {
+                                    tagOpen = true;
+                                }
 								resources.push({
-									name: tag
+                                    name: tag,
+                                    open: tagOpen
 								});
 							}
 							resource = resources[map[tag]];
 							resource.operations = resource.operations || [];
 							operation.id = operationId++;
-							operation.open = openPath && (openPath.match(new RegExp(operation.operationId + '.*|' + resource.name + '\\*$')));
+							operation.open = (openPath && (openPath.match(new RegExp(operation.operationId + '.*|' + resource.name + '\\*$')))) || (docExpansion === 'full');
 							resource.operations.push(angular.copy(operation));
 							if (operation.open) {
 								resource.open = true;

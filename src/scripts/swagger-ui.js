@@ -53,7 +53,12 @@ angular
 				//
 				inputType: '@?',
 				// Allows rendering an external OpenApi specification (string or object, optional)
-				input: '=?'
+                input: '=?',
+                // Tag & Operations expansion option
+				// Allowed values:
+				//		"list": (default) expand all tags
+				//		"full": expand all tags and operations
+				docExpansion: '@?'
 			},
 			link: function(scope) {
 				// check parameters

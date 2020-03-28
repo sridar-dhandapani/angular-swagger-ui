@@ -94,7 +94,8 @@ angular
 					var data = {
 						url: url,
 						parser: $scope.parser || 'auto',
-						trustedSources: $scope.trustedSources
+                        trustedSources: $scope.trustedSources,
+                        docExpansion: $scope.docExpansion
 					};
 					swaggerLoader
 						.get(data)
